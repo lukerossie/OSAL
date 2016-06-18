@@ -1,0 +1,13 @@
+Every Platform Simplified
+#define EPS_HEADERS_ONLY if you are using a binary implementation and don't want to recompile the source each time.
+
+Dependencies:
+	On windows:
+	On linux:
+	On osx:
+	On ios:
+	On android:
+	On xbox one:
+	On wii u:
+	On 3ds:
+	On ps4:

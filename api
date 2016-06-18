@@ -1,0 +1,25 @@
+SDL used in SG2D:
+
+SDL_lowScancode
+SDL_highScancode (can be replaced by a generic function to get any key press or array of currently pressed keys)
+SDL_Rect
+SDL_SetTextureAlphaMod
+SDL_SetTextureBlendMode
+SDL_RenderCopyEx
+SDL_mutex and related functions (easily replacable)
+SDL_Delay
+SDL_thread and related functions (easily replacable)
+SDL_Cursor and SDL_SetCursor (possibly not cross-platform)
+SDL_Surface (this can be any buffer that can be turned into a texture)
+
+SDL used in current platform layer headers:
+init flags
+SDL_Renderer
+SDL_Window
+SDL_Texture
+SDL_Point
+SDL_RendererFlip (is this actually used?)
+SDL_Color
+SDL_Keycode (should be easily replacable, right now probably everything used is convertible to char)
+TCPsocket
+Mix_Chunk
