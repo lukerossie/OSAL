@@ -1,0 +1,26 @@
+/*
+this covers any other OS features such as time, files, threads, mutex, hardware information, etc.
+*/
+std::string loadFile(char const *path);//file path to string of contents
+/*
+This whole class has gotta be the most inefficient thing of all time.
+*/
+class Clock
+{
+
+	public:
+
+	int FPS;
+	long long start;
+	long long oldclock;
+	long long dclock;
+	long long milliSinceConstruction;
+	long long deltaMilli;
+	float deltaSeconds;
+
+	Clock();
+    	void update();
+    	void reset();
+	long long getNow();
+};
+

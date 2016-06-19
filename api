@@ -23,3 +23,13 @@ SDL_Color
 SDL_Keycode (should be easily replacable, right now probably everything used is convertible to char)
 TCPsocket
 Mix_Chunk
+
+breaking changes for neon needle so far:
+insec takes a Rect not an SDL_Rect
+
+TODO 
+headers should not include anything in modules like in BILE or OSAL
+
+replace all #pragma once with #ifndef #define #endif
+
+
