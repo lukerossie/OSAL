@@ -10,6 +10,6 @@ tcp_socket *ctor_connect(char const *ip_address, int port);
 tcp_socket *ctor_accept();
 void dtor_close(tcp_socket *sock);
 void send(tcp_socket *who, char *data);
-char *amem_recv(tcp_socket *who);
+char *amem_recv(tcp_socket *who);//returns NULL if recv 0 bytes
 
 #endif

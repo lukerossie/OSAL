@@ -2,12 +2,18 @@
 #include <mach-o/dyld.h>
 #endif
 
+#ifdef __APPLE__
+#include <SDL2/SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
+
 #include <chrono>
 #include <cstdlib>
 #include <random>
 
 #include "../hpp/system.hpp"
-#include "../../IFUM/hpp/IFUM.hpp"
+#include "../hpp/util.hpp"
 
 namespace
 {
@@ -15,43 +21,52 @@ namespace
     std::mt19937 gen(rd());
 }
 
-int rand_num(int min, int max)
+int rand_num(s32 min, s32 max)
 {
     std::uniform_int_distribution<> dis(min, max);
     return dis(gen);
 }
 
-void *amem(unsigned int size)
+void delay(u32 milliseconds)
+{
+	SDL_Delay(milliseconds);
+}
+
+void *amem(u32 size)
 {
 	return malloc(size);
+}
+void *rmem(void *block, u32 size)
+{
+	return realloc(block, size);
 }
 void fmem(void *mem)
 {
 	free(mem);
 }
 
-void print(char *str)
+void print(char const *str)
 {
-	printf(str);
+	printf("%s",str);
 }
 char *amem_file(char const *path)
 {//at least 2x slower than it should be
-	using namespace std;
+
 #ifdef  __APPLE__
 	char adjpath[1024];
 	uint32_t size = sizeof(adjpath);
 	_NSGetExecutablePath(adjpath, &size);
 	string adjpathstr=adjpath;
-	for(int i=adjpathstr.length(); i>0; i--)
+	for(int i=adjpathstr.size(); i>0; i--)
 	{
 		if(adjpathstr[i]=='/' || adjpathstr[i]=='\\')
 		{
-			adjpathstr=adjpathstr.substr(0,i);
+			adjpathstr=adjpathstr.slice(0,i-1);
 			break;
 		}
 	}
-	string finalpathadj=adjpathstr+"/"+string(path);
-	path=finalpathadj.c_str();
+	string finalpathadj=adjpathstr.concat("/").concat(path);
+	path=finalpathadj.cstr;
 #endif
 
     FILE* fp=fopen(path, "r");
@@ -65,11 +80,11 @@ char *amem_file(char const *path)
     int c;
     while ((c = fgetc(fp)) != EOF)
     {
-       s+=c;
+       s=s.concat(c);
     }
     fclose(fp);
 	char *retval=(char *)amem(s.size()+1);
-	copy_cstr(s.c_str(),retval);
+	cstr_copy(s.cstr,retval);
     return retval;
 }
 long long milli_current_time()

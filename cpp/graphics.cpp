@@ -9,7 +9,8 @@
 #endif
 
 #include "../hpp/graphics.hpp"
-#include "../../IFUM/hpp/IFUM.hpp"
+#include "../hpp/util.hpp"
+#include "../hpp/system.hpp"
 
 namespace
 {
@@ -39,7 +40,7 @@ color::color(u32 hex):r(0),g(0),b(0),a(255)
 	}
 }
 color::color(u8 r_p,u8 g_p,u8 b_p,u8 a_p):r(r_p),g(g_p),b(b_p),a(a_p){}
-u8 &color::operator[](int index)
+u8 &color::operator[](u32 index)
 {
 	switch(index){
 		case 0:
@@ -72,8 +73,13 @@ u32 color::to_hex()//@bug assumes 32bit pixel
 If width or height is 0 sets width and height from screen size (displaymode).
 Returns the screen width and height.
 */
-vec2 init_graphics( char const *title, int width, int height, int flags )
+vec2 init_graphics()
 {
+	char const *title=""; 
+	int width=0;
+	int height=0;
+	int flags=SDL_WINDOW_FULLSCREEN;
+
 	if( SDL_Init( SDL_INIT_EVERYTHING ) < 0 )
 	{
 		print( "Critical Error\n SDL_Init failed. Application will now exit.\n" );
@@ -142,4 +148,118 @@ void clear()
 void flip()
 {
 	SDL_RenderPresent( renderer );
+}
+
+namespace
+{
+	void set_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
+	{
+		Uint8 *pixel_to_write=(Uint8 *)surface->pixels + y * surface->pitch + x * 4;
+		*(Uint32*)pixel_to_write=pixel;
+	}
+	Uint32 get_pixel(SDL_Surface *surface, int x, int y)
+	{
+		return *(Uint32 *)((Uint8 *)surface->pixels + y * surface->pitch + x * 4);
+	}
+	SDL_Surface *make_rgb_surface(int size_x,int size_y)
+	{
+		u32 rmask, gmask, bmask, amask;
+		if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
+		{
+			rmask = 0xff000000;
+			gmask = 0x00ff0000;
+			bmask = 0x0000ff00;
+			amask = 0x000000ff;
+		}
+		else
+		{
+			rmask = 0x000000ff;
+			gmask = 0x0000ff00;
+			bmask = 0x00ff0000;
+			amask = 0xff000000;
+		}
+
+		SDL_Surface *surf = SDL_CreateRGBSurface(0, size_x,size_y, 32, rmask, gmask, bmask, amask);
+
+		if(surf == NULL)
+		{
+			print(SDL_GetError());
+		}
+		return surf;
+	}
+}
+struct texture
+{
+	SDL_Texture *sdl_texture;
+};
+texture *ctor_texture(char const *image_file_path)
+{
+	SDL_Surface* surf = IMG_Load( image_file_path );
+	texture *t=(texture*)amem(sizeof(texture));
+	t->sdl_texture = SDL_CreateTextureFromSurface( renderer, surf );
+    if(!t->sdl_texture)
+    {
+        print(SDL_GetError());
+    }
+	SDL_FreeSurface( surf );
+    SDL_SetTextureBlendMode(t->sdl_texture, SDL_BLENDMODE_BLEND);
+	return t;
+}
+texture *ctor_texture(color *pixels, u32 size_x, u32 size_y)
+{
+    SDL_Surface *surf=make_rgb_surface(size_x,size_y);
+
+	if(surf==NULL) 
+	{
+        print(SDL_GetError());
+	}
+
+	SDL_LockSurface(surf);
+	for(u32 a=0; a<size_x; a++)
+	{
+		for(u32 b=0; b<size_y; b++)
+		{
+			set_pixel(surf,a,b,pixels[a+b*size_x].to_hex());
+		}
+	}
+	SDL_UnlockSurface(surf);
+
+	SDL_Texture *sdl_texture=SDL_CreateTextureFromSurface(renderer,surf);
+    if(!sdl_texture)print(SDL_GetError());
+	SDL_FreeSurface(surf);
+	texture *t=(texture*)amem(sizeof(texture));
+	t->sdl_texture=sdl_texture;
+    SDL_SetTextureBlendMode(t->sdl_texture, SDL_BLENDMODE_BLEND);
+	return t;
+}
+void dtor_texture(texture *t)
+{
+	SDL_DestroyTexture(t->sdl_texture);
+	fmem(t);
+}
+void draw_texture(texture *texture, rect *dest, f32 angle, vec2 *center, rect *src)
+{
+	SDL_Rect sdl_src=SDL_Rect();
+	if(src)
+	{
+		sdl_src.x=src->x;
+		sdl_src.y=src->y;
+		sdl_src.w=src->w;
+		sdl_src.h=src->h;
+	}
+	SDL_Rect sdl_dest=SDL_Rect();
+	if(dest)
+	{
+		sdl_dest.x=dest->x;
+		sdl_dest.y=dest->y;
+		sdl_dest.w=dest->w;
+		sdl_dest.h=dest->h;
+	}
+	SDL_Point sdl_center=SDL_Point();
+	if(center)
+	{
+		sdl_center.x=center->x;
+		sdl_center.y=center->y;
+	}
+	SDL_RenderCopyEx( renderer, texture->sdl_texture, src?&sdl_src:NULL, dest?&sdl_dest:NULL, angle, center?&sdl_center:NULL, SDL_FLIP_NONE );
 }

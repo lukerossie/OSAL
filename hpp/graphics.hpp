@@ -1,10 +1,10 @@
 #ifndef GRAPHICS_HPP
 #define GRAPHICS_HPP
 
-#include "../../IFUM/hpp/IFUM.hpp"
+#include "../hpp/util.hpp"
 
 //Returns the screen width and height.
-vec2 init_graphics( char const *title, int height, int width, int flags );
+vec2 init_graphics();
 
 //Clear screen
 void clear();
@@ -22,7 +22,8 @@ struct color
 };
 
 struct texture;
-texture *ctor_texture(char *image_file_path);
-texture *ctor_texture(list<list<color>> *pixels);
-
+texture *ctor_texture(char const *image_file_path);
+texture *ctor_texture(color *pixels, u32 size_x, u32 size_y);
+void dtor_texture(texture *t);
+void draw_texture(texture *texture, rect *dest=0, f32 angle=0, vec2 *center=0, rect *src=0);
 #endif

@@ -39,21 +39,22 @@ sound *ctor_sound( char *sound_file_path, bool loop )
 	s->m=Mix_LoadWAV(sound_file_path);
 	s->loop=loop;
 	s->channel=soundCounter++;
+	return s;
 }
 void dtor_sound(sound *s)
 {
 	Mix_FreeChunk(s->m);
 	fmem(s);
 }
-void play_sound(sound *s);
+void play_sound(sound *s)
 {
 	Mix_PlayChannel( s->channel, s->m, 0 );
 }
-void pause_sound(sound *s);
+void pause_sound(sound *s)
 {
 	Mix_Pause( s->channel );
 }
-void resume_sound(sound *s);
+void resume_sound(sound *s)
 {
 	Mix_Resume( s->channel );
 }
