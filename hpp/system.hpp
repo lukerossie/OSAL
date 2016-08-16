@@ -11,6 +11,8 @@ void *rmem(void *block, u32 size);//realloc
 void fmem(void *mem);//free
 
 char *amem_file(char const *path);//file path to string of contents
+void write_file(char const *path, char const *data, u32 bytes);
+void write_file_cstr(char const *path, char const *data);
 
 void print(char const *str);
 
