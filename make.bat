@@ -1,0 +1,1 @@
+cl -c /EHsc src/cpp/graphics.cpp src/cpp/system.cpp src/cpp/input.cpp src/cpp/util.cpp src/cpp/sound.cpp src/cpp/net.cpp
