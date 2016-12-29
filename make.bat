@@ -1,1 +1,1 @@
-cl -c /EHsc src/cpp/graphics.cpp src/cpp/system.cpp src/cpp/input.cpp src/cpp/util.cpp src/cpp/sound.cpp src/cpp/net.cpp
+gcc -c -std=c90 src/c/graphics.c src/c/system.c src/c/input.c src/c/util.c src/c/sound.c src/c/net.c -pedantic
