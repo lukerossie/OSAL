@@ -36,7 +36,7 @@ typedef struct sound
 } sound;
 sound *ctor_sound( char *sound_file_path, bool loop )
 {	
-	sound *s=malloc(sizeof(sound));
+	sound *s=(sound*)malloc(sizeof(sound));
 	s->m=Mix_LoadWAV(sound_file_path);
 	s->loop=loop;
 	s->channel=sound_counter++;

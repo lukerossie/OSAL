@@ -34,7 +34,7 @@ vec2 vec2_unit(vec2 v)
 }
 vec2 vec2_abs(vec2 v)
 {
-	v.x=(f64)abs(v.x);
-	v.y=(f64)abs(v.y);
+	v.x=(f64)fabs(v.x);
+	v.y=(f64)fabs(v.y);
 	return v;
 }

@@ -23,7 +23,7 @@ tcp_socket *ctor_tcp_socket_connect(char const *ip_address, int port)
 	tcp_socket *sock;
 
 	SDLNet_ResolveHost(&myip,ip_address,port);
-	sock=malloc(sizeof(tcp_socket));
+	sock=(tcp_socket*)malloc(sizeof(tcp_socket));
 	sock->sock=SDLNet_TCP_Open(&myip);
 	return sock;
 }
