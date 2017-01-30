@@ -6,6 +6,9 @@
 int rand_num(s32 min, s32 max);
 void sleep(u32 milliseconds);
 s64 milli_current_time();
+char *malloc_file_cstr(char const *path);
+void write_file_cstr(char const *path, char const *cstr);
+int rand_num(s32 min, s32 max);
 /*
 struct raw_thread;
 void wait_thread(raw_thread *t,int *status_out);
